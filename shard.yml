@@ -1,0 +1,11 @@
+name: crinput
+description: |
+  Input events and realtime queries for CrSFML apps with YAML-customizable key/mouse/joystick bindings.
+version: 0.1.0
+
+authors:
+  - mathalaxy <schwarz.f@web.de>
+
+crystal: 0.32.1
+
+license: MIT
