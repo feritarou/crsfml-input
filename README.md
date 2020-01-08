@@ -1,13 +1,13 @@
-[![GitHub release](https://img.shields.io/github/release/mathalaxy/crinput.svg)](https://github.com/mathalaxy/crinput/releases)
+[![GitHub release](https://img.shields.io/github/release/mathalaxy/crsfml-input.svg)](https://github.com/mathalaxy/crsfml-input/releases)
 
-[![Build Status](https://travis-ci.org/mathalaxy/crinput.svg?branch=master)](https://travis-ci.org/mathalaxy/crinput)
+[![Build Status](https://travis-ci.org/mathalaxy/crsfml-input.svg?branch=master)](https://travis-ci.org/mathalaxy/crsfml-input)
 
-[![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://mathalaxy.github.io/crinput/)
+[![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://mathalaxy.github.io/crsfml-input/)
 
-# CrInput
-**Customizable input for CrSFML apps**
+# CrSFML-Input
+**Customizable keyboard/joystick/mouse input bindings for CrSFML apps**
 
-A library for customizable key/mouse/joystick bindings on top of [CrSFML](https://github.com/oprypin/crsfml#readme)'s event-driven and continuous input facilities. User input is organized around "input events" and "input queries". What CrSFML input is mapped to these entities then depends on a YAML file (or a part of it), which is easily customizable.
+This shard extends [CrSFML](https://github.com/oprypin/crsfml#readme)'s event-driven and continuous input facilities with customizable bindings. User input is organized around "input events" and "input queries". Which actual input is mapped to these entities then depends on a YAML config file (or a section of another if you prefer), making customization as simple as it gets.
 
 ## Installation
 
@@ -15,65 +15,76 @@ A library for customizable key/mouse/joystick bindings on top of [CrSFML](https:
 
    ```yaml
    dependencies:
-     crinput:
-       github: mathalaxy/crinput
+     crsfml-input:
+       github: mathalaxy/crsfml-input
    ```
 
 2. Run `shards install`
 
 ## Usage
 
-### Preparations
+### Basics
 
-Include CrInput by requiring it from your project:
+To use CrSFML-Input you first need to require it from your project:
 ```crystal
-require "crinput"
-# CrInput requires "crsfml" for you
+require "crsfml-input"
+# CrSFML-Input requires "crsfml" for you
 ```
+
+All functions are "static" class methods of the `Input` module which serves as a namespace.
+
 ### Defining input events
 
-You need to define some (abstract) input events and default bindings (concrete keys). Choose descriptive names for them - something like `toggle pause` or `jump` - and build them into a YAML structure like this:
-```crystal
-yaml = <<-HEREDOC
+You need to define some (abstract) input events and default bindings (concrete keys/buttons). Choose descriptive names for them - something like `toggle pause` or `jump` - and combine them into a YAML structure:
+
+```yaml
 events:
   step:
     key: Up
   rush:
     key: Ctrl+Shift+Up
-    # Alt, System, LCtrl, RShift etc. work just as well
+    # Ctrl is an alias for SFML's `Control` key code
+    # Alt, System, LCtrl, RShift etc. work just the same
   show help:
     # multiple key bindings for the same event:
     key:
     - F1
     - Alt+H
-HEREDOC
 ```
-Finally, you must let CrInput know about your events with a call to `CrInput.def_map(yaml)`. There are overloads that take a `YAML::Any` or read YAML directly from a file, in case you dislike embedding your defaults within the code.
+
+Let CrSFML-Input know about your events by setting the `Input.default_bindings` property to a `YAML::Any` or `String`:
+
+```crystal
+Input.default_bindings = yaml_or_string
+```
+
+In case you dislike embedding your defaults within the code, call `Input.load_default_bindings` instead to read directly from a YAML file.
 
 ### Custom bindings
 
-Once the *default* bindings are set up for all available events, you can now easily override them with (user) *customized* ones by replacing (parts of) your YAML with new data (possibly from another file):
+Once the *default* bindings are set up for all available input events, you can now easily override some of them with (user) *customized* ones using the `Input.bindings` property:
 
 ```crystal
-# Override just selected input effects; all other default bindings remain in effect
-CrInput.load_map <<-NEW_YAML
+# Override just selected input events
+# all other default bindings remain in effect
+Input.bindings = <<-NEW_YAML
 events:
   show help:
     key: Ctrl+H
 NEW_YAML
 
-# Load customized mappings directly from a file
-CrInput.load_map "bindtest.yml"
+# Load customized bindings directly from a file
+Input.load_bindings "bindtest.yml"
 
-# Only use a subset of a bigger YAML file
+# Use a subsection of a bigger YAML file
 cfg = YAMl.parse "config.yml"
 if node = cfg.dig("custom", "input", "user-overrides")
-  CrInput.load_map node
+  Input.bindings = node
 end
 ```
 
 ### Using input events
-To use your abstract input events in a CrSFML app, simply place a call to `CrInput.lookup(event)` within your event loop and `case` its return value instead of the SFML event itself:
+To use your abstract input events in a CrSFML app, place a call to `Input.event?` within your event loop and `case` its return value instead of the SFML event itself:
 
 ```crystal
 # Create a CrSFML window
@@ -83,17 +94,18 @@ while window.open?
   while ev = window.poll_event
     # a nested case switch lets you
     # define the subset of CrSFML
-    # events CrInput should handle
+    # events Input should handle
     case ev
     when SF::Event::Closed
       window.close; break
     when SF::Event::MouseButtonClicked
       # handle it
     else
-      # Let lookup process the CrSFML event.
+      # Let CrSFML-Input process the CrSFML event.
       # If a mapping is defined for ev,
-      # it returns the respective input event.
-      case CrInput.lookup(ev)
+      # it returns the respective input event,
+      # otherwise nil.
+      case Input.event?(ev)
       when "step"
         # ...
       when "rush"
@@ -128,7 +140,7 @@ Planned features list:
 
 ## Contributing
 
-1. Fork it (<https://github.com/mathalaxy/crinput/fork>)
+1. Fork it (<https://github.com/mathalaxy/crsfml-input/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

@@ -1,6 +1,6 @@
-name: crinput
+name: crsfml-input
 description: |
-  Input events and realtime queries for CrSFML apps with YAML-customizable key/mouse/joystick bindings.
+  Customizable input bindings for CrSFML apps
 version: 0.1.0
 
 authors:

@@ -1,16 +1,15 @@
 require "yaml"
-require "bit_array"
 
-module CrInput
+module Input
 
-  class Mapping
+  class Bindings
 
     # =======================================================================================
     # Enums
     # =======================================================================================
 
     @[Flags]
-    enum Modifier
+    enum Modifiers
       LShift; RShift
       LCtrl; RCtrl
       LAlt; RAlt
@@ -18,19 +17,27 @@ module CrInput
     end
 
     # =======================================================================================
+    # Type aliases
+    # =======================================================================================
+
+    # One particular key, or key/modifiers combination, that can be bound to an input event/input query.
+    alias KeyBinding = {Modifiers, SF::Keyboard::Key}
+
+    # =======================================================================================
     # Instance properties
     # =======================================================================================
 
-    getter key_pressed_event = {} of {Modifier, SF::Keyboard::Key} => String
+    # Returns all registered key bindings for input events.
+    getter key_pressed_bindings = {} of KeyBinding => String
 
     # =======================================================================================
     # Map creation functions
     # =======================================================================================
 
-    def add_key_pressed_event(name : String, binding : String)
+    def add_key_pressed_binding(name : String, binding : String)
       tuples = parse_key_binding(binding)
       tuples.each do |t|
-      	@key_pressed_event[t] = name
+      	@key_pressed_bindings[t] = name
       end
     end
 
@@ -38,23 +45,24 @@ module CrInput
     # Helper functions
     # =======================================================================================
 
+    # Parses a *string* describing a particular key binding into a `KeyBinding`.
     private def parse_key_binding(string)
       key_name = string.match(/[^+]*$/).not_nil![0]
       code = SF::Keyboard::Key.parse key_name
 
-      mod_sets = [Modifier::None]
+      mod_sets = [Modifiers::None]
 
       while matched = string.match(/^[LR]?(Ctrl|Shift|Alt|System)\+/)
         word = matched[0]
         s1 = word.rchop.downcase
-        Modifier.each do |mod|
+        Modifiers.each do |mod|
           s2 = mod.to_s.downcase
           if s1 == s2
             mod_sets.map! { |ms| ms | mod }
             break
           elsif s1 == s2.lchop
             one, the_other, both = mod_sets.clone, mod_sets.clone, mod_sets.clone
-            other = Modifier.parse("#{s2[0] == 'l' ? 'R' : 'L'}#{mod.to_s.lchop}")
+            other = Modifiers.parse("#{s2[0] == 'l' ? 'R' : 'L'}#{mod.to_s.lchop}")
             one.map! { |ms| ms | mod }
             the_other.map! { |ms| ms | other }
             both.map! { |ms| ms | mod | other }

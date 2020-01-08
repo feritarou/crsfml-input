@@ -1,2 +1,2 @@
 require "spec"
-require "../src/crinput"
+require "../src/crsfml-input"
