@@ -1,7 +1,19 @@
+{% if system("find . -path ./lib/crsfml").empty? %}
+# If CrSFML is unavailable, emulate its structure with dummies so crystal docs does not fail
+module SF
+  module Keyboard
+    enum Key
+      Dummy
+    end
+  end
+end
+{% else %}
 require "crsfml"
+{% end %}
+
 require "./bindings"
 
-#
+# Namespace for all "static" functions provided by CrSFML-Input.
 module Input
   extend self
 

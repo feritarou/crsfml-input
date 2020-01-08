@@ -1,7 +1,5 @@
 [![GitHub release](https://img.shields.io/github/release/mathalaxy/crsfml-input.svg)](https://github.com/mathalaxy/crsfml-input/releases)
 
-[![Build Status](https://travis-ci.org/mathalaxy/crsfml-input.svg?branch=master)](https://travis-ci.org/mathalaxy/crsfml-input)
-
 [![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://mathalaxy.github.io/crsfml-input/)
 
 # CrSFML-Input
