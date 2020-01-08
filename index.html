@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 0.31.1">
+
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/doc.js"></script>
+
+<svg class="hidden">
+  <symbol id="octicon-link" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+  </symbol>
+</svg>
+
+  <meta id="repository-name" content="github.com/mathalaxy/crsfml-input">
+  <title>README - github.com/mathalaxy/crsfml-input</title>
+  <script type="text/javascript">
+  CrystalDoc.base_path = "";
+  </script>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="repository-links">
+      <a href="index.html">README</a>
+    </div>
+  </div>
+
+  <div class="search-results" class="hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class=" " data-id="github.com/mathalaxy/crsfml-input/toplevel" data-name="top level namespace">
+      <a href="toplevel.html">Top Level Namespace</a>
+      
+    </li>
+  
+  <li class="parent " data-id="github.com/mathalaxy/crsfml-input/Input" data-name="input">
+      <a href="Input.html">Input</a>
+      
+        <ul>
+  
+  <li class="parent " data-id="github.com/mathalaxy/crsfml-input/Input/Bindings" data-name="input::bindings">
+      <a href="Input/Bindings.html">Bindings</a>
+      
+        <ul>
+  
+  <li class=" " data-id="github.com/mathalaxy/crsfml-input/Input/Bindings/KeyBinding" data-name="input::bindings::keybinding">
+      <a href="Input/Bindings/KeyBinding.html">KeyBinding</a>
+      
+    </li>
+  
+  <li class=" " data-id="github.com/mathalaxy/crsfml-input/Input/Bindings/Modifiers" data-name="input::bindings::modifiers">
+      <a href="Input/Bindings/Modifiers.html">Modifiers</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+  <li class="parent " data-id="github.com/mathalaxy/crsfml-input/SF" data-name="sf">
+      <a href="SF.html">SF</a>
+      
+        <ul>
+  
+  <li class="parent " data-id="github.com/mathalaxy/crsfml-input/SF/Keyboard" data-name="sf::keyboard">
+      <a href="SF/Keyboard.html">Keyboard</a>
+      
+        <ul>
+  
+  <li class=" " data-id="github.com/mathalaxy/crsfml-input/SF/Keyboard/Key" data-name="sf::keyboard::key">
+      <a href="SF/Keyboard/Key.html">Key</a>
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<p><a href="https://github.com/mathalaxy/crsfml-input/releases" target="_blank"><img src="https://img.shields.io/github/release/mathalaxy/crsfml-input.svg" alt="GitHub release"/></a></p>
+
+<p><a href="https://mathalaxy.github.io/crsfml-input/" target="_blank"><img src="https://img.shields.io/badge/docs-available-brightgreen.svg" alt="Docs"/></a></p>
+
+<h1><a id="cr-sfml-input" class="anchor" href="#cr-sfml-input">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>CrSFML-Input</h1>
+
+<p><strong>Customizable keyboard/joystick/mouse input bindings for CrSFML apps</strong></p>
+
+<p>This shard extends <a href="https://github.com/oprypin/crsfml#readme" target="_blank">CrSFML</a>'s event-driven and continuous input facilities with customizable bindings. User input is organized around "input events" and "input queries". Which actual input is mapped to these entities then depends on a YAML config file (or a section of another if you prefer), making customization as simple as it gets.</p>
+
+<h2><a id="installation" class="anchor" href="#installation">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Installation</h2>
+
+<ol><li>Add the dependency to your <code>shard.yml</code>:</li></ol>
+
+<p><code></code>`yaml
+   dependencies:</p>
+
+<pre><code> crsfml<span class="o">-</span>input:
+   github: mathalaxy<span class="s">/crsfml-input</code></pre>
+
+<p><code></code>`</p>
+
+<ol><li>Run <code>shards install</code></li></ol>
+
+<h2><a id="usage" class="anchor" href="#usage">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Usage</h2>
+
+<p>To use CrSFML-Input you first need to require it from your project:</p>
+
+<pre><code class="language-crystal"><span class="k">require</span> <span class="s">&quot;crsfml-input&quot;</span>
+<span class="c"># CrSFML-Input requires &quot;crsfml&quot; for you</span></code></pre>
+
+<p>All functions are "static" class methods of the <code><a href="Input.html">Input</a></code> module which serves as a namespace.</p>
+
+<p>The general idea behind CrSFML-Input is to replace CrSFML's simple mechanism to identify keys/joystick buttons etc. through event classes and realtime access functions by queries to an intermediate layer of <em>input events</em> and <em>input queries</em> identified by strings. Binding these to particular input devices (keys, buttons, or joystick axes) thus becomes separated from all event/status checks, and in fact from the code as a whole.</p>
+
+<p>For instance, instead of the very specific</p>
+
+<pre><code class="language-crystal"><span class="k">case</span> key_event.code
+<span class="k">when</span> <span class="t">SF</span><span class="t">::</span><span class="t">Key</span><span class="t">::</span><span class="t">Space</span>
+  <span class="c"># toggle pause screen ...</span>
+<span class="k">end</span></code></pre>
+
+<p>you could write more generally,</p>
+
+<pre><code class="language-crystal"><span class="k">case</span> <span class="t">Input</span>.event?(some_event)
+<span class="k">when</span> <span class="s">&quot;pause&quot;</span>
+  <span class="c"># toggle pause screen ...</span>
+<span class="k">end</span></code></pre>
+
+<p>and let the user decide which particular key or key combination should be bound to the "pause" event.</p>
+
+<p>Similarly, you could use <code>Input.query("run")</code> to determine the state of whichever key/joystick button/... is bound to "run".
+Once you have set up your events and queries, CrSFML-Input will handle the connection between them and the actual user input.</p>
+
+<h3><a id="defining-input-events-and-queries" class="anchor" href="#defining-input-events-and-queries">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Defining input events and queries</h3>
+
+<p>To make CrSFML-Input work, you first need to define some (abstract) input events and default bindings (concrete keys/buttons). Choose descriptive names for them - something like <code>toggle pause</code> or <code>jump</code> - and combine them into a YAML structure under the section headings <code>events</code> and <code>queries</code>, respectively:</p>
+
+<pre><code class="language-yaml">events:
+  step:
+    key: Up
+  rush:
+    key: Ctrl+Shift+Up
+    # Ctrl is an alias for SFML's `Control` key code
+    # Alt, System, LCtrl, RShift etc. work just the same
+  show help:
+    # multiple key bindings for the same event:
+    key:
+    - F1
+    - Alt+H
+queries:
+  charging:
+    key: LShift+Space</code></pre>
+
+<p>Let CrSFML-Input know about it by setting the <code>Input.default_bindings</code> property to a <code>YAML::Any</code> or <code>String</code>:</p>
+
+<pre><code class="language-crystal"><span class="t">Input</span>.default_bindings <span class="o">=</span> yaml_or_string</code></pre>
+
+<p>If you do not want to embed your defaults within the code, call <code>Input.load_default_bindings</code> instead to read directly from a YAML file.</p>
+
+<h3><a id="custom-bindings" class="anchor" href="#custom-bindings">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Custom bindings</h3>
+
+<p>Once the <em>default</em> bindings are set up for all available input events and queries, you can now easily override some of them with (user) <em>customized</em> ones using the <code>Input.bindings</code> property:</p>
+
+<pre><code class="language-crystal"><span class="c"># Override just selected input events</span>
+<span class="c"># all other default bindings remain in effect</span>
+<span class="t">Input</span>.bindings <span class="o">=</span> <span class="s">&lt;&lt;-NEW_YAML
+events:
+  show help:
+    key: Ctrl+H
+NEW_YAML</span>
+
+<span class="c"># Load customized bindings directly from a file</span>
+<span class="t">Input</span>.load_bindings <span class="s">&quot;bindtest.yml&quot;</span>
+
+<span class="c"># Use a subsection of a bigger YAML file</span>
+cfg <span class="o">=</span> <span class="t">YAMl</span>.parse <span class="s">&quot;config.yml&quot;</span>
+<span class="k">if</span> node <span class="o">=</span> cfg.dig(<span class="s">&quot;custom&quot;</span>, <span class="s">&quot;input&quot;</span>, <span class="s">&quot;user-overrides&quot;</span>)
+  <span class="t">Input</span>.bindings <span class="o">=</span> node
+<span class="k">end</span></code></pre>
+
+<h3><a id="using-input-events" class="anchor" href="#using-input-events">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Using input events</h3>
+
+<p>To handle your abstract input events in a CrSFML app, place a call to <code>Input.event?</code> within your event loop and check its return value instead of the SFML event itself:</p>
+
+<pre><code class="language-crystal">window <span class="o">=</span> <span class="t">SF</span><span class="t">::</span><span class="t">Window</span>.<span class="k">new</span>(<span class="t">SF</span><span class="t">::</span><span class="t">VideoMode</span>.<span class="k">new</span>(<span class="n">400</span>, <span class="n">300</span>), <span class="s">&quot;Hi&quot;</span>)
+
+<span class="k">while</span> window.open?
+  <span class="k">while</span> ev <span class="o">=</span> window.poll_event
+    <span class="c"># a nested case switch lets you</span>
+    <span class="c"># define the subset of CrSFML</span>
+    <span class="c"># events Input should handle</span>
+    <span class="k">case</span> ev
+    <span class="k">when</span> <span class="t">SF</span><span class="t">::</span><span class="t">Event</span><span class="t">::</span><span class="t">Closed</span>
+      window.close; <span class="k">break</span>
+    <span class="k">when</span> <span class="t">SF</span><span class="t">::</span><span class="t">Event</span><span class="t">::</span><span class="t">MouseButtonClicked</span>
+      <span class="c"># handle it</span>
+    <span class="k">else</span>
+      <span class="c"># Let CrSFML-Input process the event.</span>
+      <span class="c"># If a mapping is defined for ev,</span>
+      <span class="c"># it will return the input event string.</span>
+      <span class="k">case</span> <span class="t">Input</span>.event?(ev)
+      <span class="k">when</span> <span class="s">&quot;step&quot;</span>
+        <span class="c"># ...</span>
+      <span class="k">when</span> <span class="s">&quot;rush&quot;</span>
+        <span class="c"># ...</span>
+      <span class="k">when</span> <span class="s">&quot;show help&quot;</span>
+        <span class="c"># ...</span>
+      <span class="k">else</span>
+        <span class="c"># return value is nil if no mapping is found</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  window.clear
+  window.display
+<span class="k">end</span></code></pre>
+
+<h2><a id="development" class="anchor" href="#development">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Development</h2>
+
+<p>Planned features list:</p>
+
+<ul><li>Handle the following <em>input events</em>:</li><ul><li>[x] keyboard events</li><li>[ ] joystick button events</li><li>[ ] mouse button events</li><li>[ ] mouse wheel events</li></ul><li>Handle the following <em>input queries</em>:</li><ul><li>[X] keyboard states</li><li>[ ] mouse button states</li><li>[ ] joystick button states</li><li>[ ] joystick axes states</li></ul><li>[ ] Provide an option to define fallback bindings when e.g. a joystick is disconnected</li></ul>
+
+<h2><a id="contributing" class="anchor" href="#contributing">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Contributing</h2>
+
+<ol><li>Fork it (&lt;https://github.com/mathalaxy/crsfml-input/fork>)</li><li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li><li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li><li>Push to the branch (<code>git push origin my-new-feature</code>)</li><li>Create a new Pull Request</li></ol>
+
+<h2><a id="contributors" class="anchor" href="#contributors">
+  <svg class="octicon-link" aria-hidden="true">
+    <use href="#octicon-link"/>
+  </svg>
+</a>Contributors</h2>
+
+<ul><li><a href="https://github.com/mathalaxy" target="_blank">mathalaxy</a> - creator and maintainer</li></ul>
+</div>
+</body>
+</html>
