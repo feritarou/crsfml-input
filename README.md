@@ -21,8 +21,6 @@ This shard extends [CrSFML](https://github.com/oprypin/crsfml#readme)'s event-dr
 
 ## Usage
 
-### Basics
-
 To use CrSFML-Input you first need to require it from your project:
 ```crystal
 require "crsfml-input"
@@ -31,9 +29,30 @@ require "crsfml-input"
 
 All functions are "static" class methods of the `Input` module which serves as a namespace.
 
-### Defining input events
+The general idea behind CrSFML-Input is to replace CrSFML's simple mechanism to identify keys/joystick buttons etc. through event classes and realtime access functions by queries to an intermediate layer of *input events* and *input queries* identified by strings. Binding these to particular input devices (keys, buttons, or joystick axes) thus becomes separated from all event/status checks, and in fact from the code as a whole.
 
-You need to define some (abstract) input events and default bindings (concrete keys/buttons). Choose descriptive names for them - something like `toggle pause` or `jump` - and combine them into a YAML structure:
+For instance, instead of the very specific
+```crystal
+case key_event.code
+when SF::Key::Space
+  # toggle pause screen ...
+end
+```
+you could write more generally,
+```crystal
+case Input.event?(some_event)
+when "pause"
+  # toggle pause screen ...
+end
+```
+and let the user decide which particular key or key combination should be bound to the "pause" event.
+
+Similarly, you could use `Input.query("run")` to determine the state of whichever key/joystick button/... is bound to "run".
+Once you have set up your events and queries, CrSFML-Input will handle the connection between them and the actual user input.
+
+### Defining input events and queries
+
+To make CrSFML-Input work, you first need to define some (abstract) input events and default bindings (concrete keys/buttons). Choose descriptive names for them - something like `toggle pause` or `jump` - and combine them into a YAML structure under the section headings `events` and `queries`, respectively:
 
 ```yaml
 events:
@@ -48,19 +67,22 @@ events:
     key:
     - F1
     - Alt+H
+queries:
+  charging:
+    key: LShift+Space
 ```
 
-Let CrSFML-Input know about your events by setting the `Input.default_bindings` property to a `YAML::Any` or `String`:
+Let CrSFML-Input know about it by setting the `Input.default_bindings` property to a `YAML::Any` or `String`:
 
 ```crystal
 Input.default_bindings = yaml_or_string
 ```
 
-In case you dislike embedding your defaults within the code, call `Input.load_default_bindings` instead to read directly from a YAML file.
+If you do not want to embed your defaults within the code, call `Input.load_default_bindings` instead to read directly from a YAML file.
 
 ### Custom bindings
 
-Once the *default* bindings are set up for all available input events, you can now easily override some of them with (user) *customized* ones using the `Input.bindings` property:
+Once the *default* bindings are set up for all available input events and queries, you can now easily override some of them with (user) *customized* ones using the `Input.bindings` property:
 
 ```crystal
 # Override just selected input events
@@ -82,10 +104,9 @@ end
 ```
 
 ### Using input events
-To use your abstract input events in a CrSFML app, place a call to `Input.event?` within your event loop and `case` its return value instead of the SFML event itself:
+To handle your abstract input events in a CrSFML app, place a call to `Input.event?` within your event loop and check its return value instead of the SFML event itself:
 
 ```crystal
-# Create a CrSFML window
 window = SF::Window.new(SF::VideoMode.new(400, 300), "Hi")
 
 while window.open?
@@ -99,10 +120,9 @@ while window.open?
     when SF::Event::MouseButtonClicked
       # handle it
     else
-      # Let CrSFML-Input process the CrSFML event.
+      # Let CrSFML-Input process the event.
       # If a mapping is defined for ev,
-      # it returns the respective input event,
-      # otherwise nil.
+      # it will return the input event string.
       case Input.event?(ev)
       when "step"
         # ...
@@ -131,10 +151,11 @@ Planned features list:
   - [ ] mouse button events
   - [ ] mouse wheel events
 - Handle the following *input queries*:
-  - [ ] keyboard states
+  - [X] keyboard states
   - [ ] mouse button states
   - [ ] joystick button states
   - [ ] joystick axes states
+- [ ] Provide an option to define fallback bindings when e.g. a joystick is disconnected
 
 ## Contributing
 

@@ -3,3 +3,6 @@ events:
     key: Down
   show help:
     key: F2
+queries:
+  charge:
+    key: LAlt+G

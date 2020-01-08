@@ -30,6 +30,10 @@ module Input
     # Returns all registered key bindings for input events.
     getter key_pressed_bindings = {} of KeyBinding => String
 
+    # Returns all registered bindings for input queries.
+    getter query_bindings = {} of String => Set(KeyBinding)
+
+
     # =======================================================================================
     # Map creation functions
     # =======================================================================================
@@ -41,11 +45,20 @@ module Input
       end
     end
 
+    def add_key_query_binding(name : String, binding : String)
+      tuples = parse_key_binding(binding)
+      if @query_bindings.has_key? name
+        @query_bindings[name].concat tuples
+      else
+        @query_bindings[name] = tuples.to_set
+      end
+    end
+
     # =======================================================================================
     # Helper functions
     # =======================================================================================
 
-    # Parses a *string* describing a particular key binding into a `KeyBinding`.
+    # Parses a *string* representation of a particular key/key combination into a `KeyBinding`.
     private def parse_key_binding(string)
       key_name = string.match(/[^+]*$/).not_nil![0]
       code = SF::Keyboard::Key.parse key_name

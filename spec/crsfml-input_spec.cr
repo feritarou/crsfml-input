@@ -15,13 +15,18 @@ module Input
           show help:
             key: [Alt+H, F1]
             # By using sequences, you can define multiple key bindings for the same event
+        queries:
+          charge:
+            key: LShift+C
         YAML_HEREDOC
         @@default_bindings.key_pressed_bindings.size.should be > 0
+        @@default_bindings.query_bindings.size.should be > 0
         ev = SF::Event::KeyPressed.new
         ev.code = SF::Keyboard::Key::Up
         Input.event?(ev).should eq "step"
         ev.code = SF::Keyboard::Key::F1
         Input.event?(ev).should eq "show help"
+        Input.query("charge").should be_false
       end
     end
 

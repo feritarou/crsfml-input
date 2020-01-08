@@ -90,20 +90,65 @@ module Input
   end
 
   # =======================================================================================
+  # Input queries
+  # =======================================================================================
+
+  # Queries the state of an input key/button bound to the input query *id*.
+  # If the query is bound to keyboard input, the method returns `true` if `SF::Keyboard.key_pressed?` returns `true` for all keys in the binding.
+  def query(id : String) : Bool
+    if bindings = (@@bindings.query_bindings[id]? || @@default_bindings.query_bindings[id]?)
+      bindings.any? do |binding|
+        case binding
+        when Bindings::KeyBinding
+          modifiers, key = binding
+          mods_pressed = true
+          modifiers.each do |modifier|
+            code = SF::Keyboard::Key.parse modifier.to_s
+            unless SF::Keyboard.key_pressed? code
+              mods_pressed = false
+              break
+            end
+          end
+          key_pressed = SF::Keyboard.key_pressed?(SF::Keyboard::Key.parse key.to_s)
+          mods_pressed && key_pressed
+        else false
+        end
+      end
+    else false
+    end
+  end
+
+  # =======================================================================================
   # Helper functions
   # =======================================================================================
 
   # Sets up the (default or customized) *bindings* based on the *customization* provided as a `YAML::Any`.
   private def parse_yaml(customization : YAML::Any, bindings : Bindings)
-    events = customization["events"].as_h
-    events.each do |event, binding_types|
-      key_bindings = binding_types["key"]
-      if array = key_bindings.as_a?
-        array.each do |key_binding|
-          bindings.add_key_pressed_binding event.as_s, key_binding.as_s
+    # Input events
+    if events = customization["events"]?
+      events.as_h.each do |event, binding_types|
+        key_bindings = binding_types["key"]
+        if array = key_bindings.as_a?
+          array.each do |key_binding|
+            bindings.add_key_pressed_binding event.as_s, key_binding.as_s
+          end
+        else
+          bindings.add_key_pressed_binding event.as_s, key_bindings.as_s
         end
-      else
-        bindings.add_key_pressed_binding event.as_s, key_bindings.as_s
+      end
+    end
+
+    # Input queries
+    if queries = customization["queries"]?
+      queries.as_h.each do |query, binding_types|
+        key_bindings = binding_types["key"]
+        if array = key_bindings.as_a?
+          array.each do |key_binding|
+            bindings.add_key_query_binding query.as_s, key_binding.as_s
+          end
+        else
+          bindings.add_key_query_binding query.as_s, key_bindings.as_s
+        end
       end
     end
   end
