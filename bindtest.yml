@@ -5,4 +5,6 @@ events:
     key: F2
 queries:
   charge:
-    key: LAlt+G
+    joystick:
+      id: 0
+      axis: Y

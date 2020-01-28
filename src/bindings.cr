@@ -23,10 +23,13 @@ module Input
     # One particular key, or key/modifiers combination, that can be bound to an input event/input query.
     alias KeyBinding = {Modifiers, SF::Keyboard::Key}
 
-    # One particular button (second number) of one particular joystick (first number) that can be bound to an input event/input query.
+    # One particular button of one particular joystick that can be bound to an input event/input query.
     record JoystickButtonBinding, joystick_id : Int32, button : Int32
 
-    alias AnyBinding = KeyBinding | JoystickButtonBinding
+    # One particular axis of one particular joystick that can be bound to an input position query.
+    record JoystickAxisBinding, joystick_id : Int32, axis : SF::Joystick::Axis
+
+    alias AnyBinding = KeyBinding | JoystickButtonBinding | JoystickAxisBinding
 
     # =======================================================================================
     # Instance properties
@@ -65,6 +68,16 @@ module Input
       tuples = parse_joystick_button_binding(binding)
       tuples.each do |t|
       	@joystick_button_pressed_bindings[t] = name
+      end
+    end
+
+    def add_joystick_axis_query_binding(name : String, joystick_id : Int32, binding : String)
+      axis = parse_joystick_axis_binding(binding)
+      jab = JoystickAxisBinding.new(joystick_id, axis)
+      if @query_bindings.has_key? name
+        @query_bindings[name] << jab
+      else
+        @query_bindings[name] = Set(AnyBinding){jab}
       end
     end
 
@@ -108,6 +121,10 @@ module Input
       [ JoystickButtonBinding.new(0, 0)]
       #TODO: Implement joystick button bindings as named backreferences
       # to a definition of the particular button within the same YAML data
+    end
+
+    private def parse_joystick_axis_binding(string)
+      SF::Joystick::Axis.parse string
     end
   end
 end

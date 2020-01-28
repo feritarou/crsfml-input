@@ -1,9 +1,10 @@
 {% if system("cd #{__DIR__}/.. && find . -path ./lib/crsfml").empty? %}
-# If CrSFML is unavailable, emulate its structure with dummies so crystal docs does not fail
+# Workaround for Travis: If CrSFML is unavailable, emulate just enough of its structure with dummies to prevent crystal docs from failing
 module SF::Keyboard
-  enum Key
-    Dummy
-  end
+  enum Key; Dummy; end
+end
+module SF::Joystick
+  enum Axis; Dummy; end
 end
 {% else %}
 require "crsfml"

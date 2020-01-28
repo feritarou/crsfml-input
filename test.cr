@@ -19,7 +19,7 @@ Input.default_bindings = default_bindings
 loaded_bindings = File.read "bindtest.yml"
 Input.load_bindings "bindtest.yml"
 
-events = ["step", "rush", "show help"]
+events = ["show help"]
 cursor = 0
 events_mastered = false
 everything_mastered = false
@@ -70,7 +70,7 @@ while window.open?
     end
   elsif events_mastered
     text.string = "You got #{TIMEOUT - elapsed} seconds to press the keys bound to the following query:\n                      charge\n\nDefault bindings:\n#{default_bindings}\n\nLoaded bindings:\n#{loaded_bindings}"
-    if Input.query("charge")
+    if Input.query_pos("charge") < 0
       text.string = "Whoohoo! You made it!"
       everything_mastered = true
       start_time = Time.monotonic

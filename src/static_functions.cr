@@ -55,7 +55,7 @@ module Input
   # The return value is either the name of the input event if a binding was found, or `nil` otherwise.
   def event?(sfml_event : SF::Event) : String?
     case sfml_event
-    when SF::Event::KeyEvent
+    when SF::Event::KeyPressed
       modifiers = Bindings::Modifiers::None
       {% for which in [:L, :R] %} {% for key in [:Shift, :Control, :Alt, :System] %}
       modifiers |= Bindings::Modifiers:{{which}}{% if key == :Control %}Ctrl{% else %}{{key.id}}{% end %} if SF::Keyboard.key_pressed?(SF::Keyboard:{{which}}{{key.id}})
@@ -103,6 +103,41 @@ module Input
     end
   end
 
+  # Queries the position of a continuous input field bound to the input query *id*.
+  # If the query is bound to keyboard input, the method returns `1` if `SF::Keyboard.key_pressed?` returns `true` for all keys in the binding, otherwise `-1`.
+  def query_pos(id : String) : Float64
+    if bindings = (@@bindings.query_bindings[id]? || @@default_bindings.query_bindings[id]?)
+      if axis_binding = bindings.find &.is_a?(Bindings::JoystickAxisBinding)
+        if axis_binding.is_a?(Bindings::JoystickAxisBinding)
+          if SF::Joystick.connected?(axis_binding.joystick_id) \
+          && SF::Joystick.axis?(axis_binding.joystick_id, axis_binding.axis)
+            pos = SF::Joystick.get_axis_position(axis_binding.joystick_id, axis_binding.axis)
+            return pos.to_f64 / 100
+          end
+        end
+      end
+
+      bindings.any? do |binding|
+        case binding
+        when Bindings::KeyBinding
+          modifiers, key = binding
+          mods_pressed = true
+          modifiers.each do |modifier|
+            code = SF::Keyboard::Key.parse modifier.to_s
+            unless SF::Keyboard.key_pressed? code
+              mods_pressed = false
+              break
+            end
+          end
+          key_pressed = SF::Keyboard.key_pressed?(SF::Keyboard::Key.parse key.to_s)
+          mods_pressed && key_pressed
+        else false
+        end
+      end ? 1.0 : -1.0
+    else -1.0
+    end
+  end
+
   # =======================================================================================
   # Helper functions
   # =======================================================================================
@@ -124,16 +159,17 @@ module Input
           end
         end
 
+        #TODO: Integrate within joystick section below
         # 2. Joystick button bindings
-        if joystick_button_bindings = binding_types["joystick_button"]?
-          if array = joystick_button_bindings.as_a?
-            array.each do |joystick_button_binding|
-              bindings.add_joystick_button_pressed_binding event.as_s, joystick_button_binding.as_s
-            end
-          else
-            bindings.add_joystick_button_pressed_binding event.as_s, joystick_button_bindings.as_s
-          end
-        end
+        # if joystick_button_bindings = binding_types["joystick_button"]?
+        #   if array = joystick_button_bindings.as_a?
+        #     array.each do |joystick_button_binding|
+        #       bindings.add_joystick_button_pressed_binding event.as_s, joystick_button_binding.as_s
+        #     end
+        #   else
+        #     bindings.add_joystick_button_pressed_binding event.as_s, joystick_button_bindings.as_s
+        #   end
+        # end
 
       end
     end
@@ -142,6 +178,7 @@ module Input
     if queries = data["queries"]?
       queries.as_h.each do |query, binding_types|
 
+        # 1. Key bindings
         if key_bindings = binding_types["key"]?
           if array = key_bindings.as_a?
             array.each do |key_binding|
@@ -149,6 +186,19 @@ module Input
             end
           else
             bindings.add_key_query_binding query.as_s, key_bindings.as_s
+          end
+        end
+
+        # 2. Joystick bindings
+        if joystick_bindings = binding_types["joystick"]?
+          joystick_bindings = joystick_bindings.as_h
+          joystick_id =  if (id = joystick_bindings["id"]?)
+                           id.as_i
+                         else
+                           0
+                         end
+          if axis_binding = joystick_bindings["axis"]?
+            bindings.add_joystick_axis_query_binding query.as_s, joystick_id, axis_binding.to_s
           end
         end
 

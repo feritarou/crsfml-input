@@ -2,7 +2,9 @@ name: crsfml-input
 description: |
   Customizable input bindings for CrSFML apps
 version: 0.2.0
-
+dependencies:
+  crsfml:
+    path: /home/felix/Programme/crsfml/src
 authors:
   - mathalaxy <schwarz.f@web.de>
 
