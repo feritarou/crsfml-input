@@ -1,5 +1,3 @@
-require "./crsfml-input"
-
 default_bindings = <<-YAML_HEREDOC
 events:
   step:
