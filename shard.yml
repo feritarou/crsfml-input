@@ -4,7 +4,7 @@ description: |
 version: 0.2.0
 dependencies:
   crsfml:
-    path: /home/felix/Programme/crsfml/src
+    path: /home/mtlx1/mtlx/crsfml/src
 authors:
   - mathalaxy <schwarz.f@web.de>
 

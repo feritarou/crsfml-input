@@ -60,13 +60,25 @@ module Input
       {% for which in [:L, :R] %} {% for key in [:Shift, :Control, :Alt, :System] %}
       modifiers |= Bindings::Modifiers:{{which}}{% if key == :Control %}Ctrl{% else %}{{key.id}}{% end %} if SF::Keyboard.key_pressed?(SF::Keyboard:{{which}}{{key.id}})
       {% end %} {% end %}
-      key = sfml_event.code
+      code = sfml_event.code
+      binding = Bindings::KeyBinding.new modifiers, code
 
-      if event = @@bindings.key_pressed_bindings[{modifiers, key}]?
+      if event = @@bindings.key_pressed_bindings[binding]?
         event
-      elsif default_event = @@default_bindings.key_pressed_bindings[{modifiers, key}]?
+      elsif default_event = @@default_bindings.key_pressed_bindings[binding]?
         if @@bindings.key_pressed_bindings.values.includes? default_event
-          nil
+          nil # if the event was overridden by custom bindings, do not fallback to defaults
+        else
+          default_event
+        end
+      end
+    when SF::Event::JoystickButtonPressed
+      binding = Bindings::JoystickButtonBinding.new sfml_event.joystick_id.to_i32, sfml_event.button.to_i32
+      if event = @@bindings.joystick_button_pressed_bindings[binding]?
+        event
+      elsif default_event = @@default_bindings.joystick_button_pressed_bindings[binding]?
+        if @@bindings.joystick_button_pressed_bindings.values.includes? default_event
+          nil # if the event was overridden by custom bindings, do not fallback to defaults
         else
           default_event
         end
@@ -85,7 +97,7 @@ module Input
       bindings.any? do |binding|
         case binding
         when Bindings::KeyBinding
-          modifiers, key = binding
+          modifiers, key = binding.modifiers, binding.code
           mods_pressed = true
           modifiers.each do |modifier|
             code = SF::Keyboard::Key.parse modifier.to_s
@@ -120,7 +132,7 @@ module Input
       bindings.any? do |binding|
         case binding
         when Bindings::KeyBinding
-          modifiers, key = binding
+          modifiers, key = binding.modifiers, binding.code
           mods_pressed = true
           modifiers.each do |modifier|
             code = SF::Keyboard::Key.parse modifier.to_s
@@ -159,17 +171,24 @@ module Input
           end
         end
 
-        #TODO: Integrate within joystick section below
         # 2. Joystick button bindings
-        # if joystick_button_bindings = binding_types["joystick_button"]?
-        #   if array = joystick_button_bindings.as_a?
-        #     array.each do |joystick_button_binding|
-        #       bindings.add_joystick_button_pressed_binding event.as_s, joystick_button_binding.as_s
-        #     end
-        #   else
-        #     bindings.add_joystick_button_pressed_binding event.as_s, joystick_button_bindings.as_s
-        #   end
-        # end
+        if joystick_bindings = binding_types["joystick"]?
+          joystick_bindings = joystick_bindings.as_h
+          joystick_id =  if (id = joystick_bindings["id"]?)
+                           id.as_i
+                         else
+                           0
+                         end
+          if button_bindings = joystick_bindings["button"]?
+            if array = button_bindings.as_a?
+              array.each do |button_binding|
+                bindings.add_joystick_button_pressed_binding event.as_s, joystick_id, button_binding.as_i
+              end
+            else
+              bindings.add_joystick_button_pressed_binding event.as_s, joystick_id, button_bindings.as_i
+            end
+          end
+        end
 
       end
     end

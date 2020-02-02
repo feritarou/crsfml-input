@@ -21,7 +21,7 @@ module Input
     # =======================================================================================
 
     # One particular key, or key/modifiers combination, that can be bound to an input event/input query.
-    alias KeyBinding = {Modifiers, SF::Keyboard::Key}
+    record KeyBinding, modifiers : Modifiers, code : SF::Keyboard::Key
 
     # One particular button of one particular joystick that can be bound to an input event/input query.
     record JoystickButtonBinding, joystick_id : Int32, button : Int32
@@ -35,11 +35,15 @@ module Input
     # Instance properties
     # =======================================================================================
 
+    # 1. Event bindings
+
     # Returns all registered key bindings for input events.
     getter key_pressed_bindings = {} of KeyBinding => String
 
     # Returns all registered joystick button bindings for input events.
     getter joystick_button_pressed_bindings = {} of JoystickButtonBinding => String
+
+    # 2. Query bindings
 
     # Returns all registered bindings for input queries.
     getter query_bindings = {} of String => Set(AnyBinding)
@@ -49,26 +53,24 @@ module Input
     # =======================================================================================
 
     def add_key_pressed_binding(name : String, binding : String)
-      tuples = parse_key_binding(binding)
-      tuples.each do |t|
+      bindings = parse_key_binding(binding)
+      bindings.each do |t|
       	@key_pressed_bindings[t] = name
       end
     end
 
     def add_key_query_binding(name : String, binding : String)
-      tuples_array = parse_key_binding(binding)
+      bindings_array = parse_key_binding(binding)
       if @query_bindings.has_key? name
-        @query_bindings[name].concat tuples_array
+        @query_bindings[name].concat bindings_array
       else
-        @query_bindings[name] = Set(AnyBinding).new tuples_array
+        @query_bindings[name] = Set(AnyBinding).new bindings_array
       end
     end
 
-    def add_joystick_button_pressed_binding(name : String, binding : String)
-      tuples = parse_joystick_button_binding(binding)
-      tuples.each do |t|
-      	@joystick_button_pressed_bindings[t] = name
-      end
+    def add_joystick_button_pressed_binding(name : String, joystick_id : Int32, button : Int32)
+      t = JoystickButtonBinding.new joystick_id, button
+      @joystick_button_pressed_bindings[t] = name
     end
 
     def add_joystick_axis_query_binding(name : String, joystick_id : Int32, binding : String)
@@ -113,14 +115,7 @@ module Input
         string = string.lchop(word)
       end
 
-      mod_sets.map { |mods| {mods, code} }
-    end
-
-    private def parse_joystick_button_binding(string)
-      # This is a stub!
-      [ JoystickButtonBinding.new(0, 0)]
-      #TODO: Implement joystick button bindings as named backreferences
-      # to a definition of the particular button within the same YAML data
+      mod_sets.map { |mods| KeyBinding.new mods, code }
     end
 
     private def parse_joystick_axis_binding(string)

@@ -13,6 +13,6 @@ require "crsfml"
 require "./bindings"
 require "./static_functions"
 
-{% if flag?(:libtest) %}
+{% if flag? :"libtest-crsfml-input" %}
 require "../test"
 {% end %}
